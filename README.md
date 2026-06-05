@@ -22,7 +22,7 @@ This project proposes a lightweight and privacy-preserving phishing URL detectio
 
 ## Project Phases
 
-1. Dataset Collection & Preprocessing
+1. Dataset Collection & Preprocessing - Completed
 2. Baseline Model Development
 3. Federated Learning Implementation
 4. Differential Privacy Integration
