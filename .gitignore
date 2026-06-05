@@ -1,0 +1,22 @@
+# Virtual environments
+venv/
+.venv/
+
+# Python
+__pycache__/
+*.pyc
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Models
+models/*.pkl
+
+# Large datasets
+dataset/raw/*.arff
+
+# macOS
+.DS_Store
+
+# VS Code
+.vscode/
