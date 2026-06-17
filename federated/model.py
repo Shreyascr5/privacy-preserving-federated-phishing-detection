@@ -18,7 +18,7 @@ def create_model():
 def load_client_data(client_id):
 
     df = pd.read_csv(
-        f"dataset/clients/client{client_id}.csv"
+        f"dataset/non_iid_clients/client{client_id}.csv"
     )
 
     X = df.drop(

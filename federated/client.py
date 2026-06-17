@@ -1,90 +1,109 @@
 # federated/client.py
 
 import flwr as fl
+import numpy as np
+import sys
+
+from sklearn.metrics import (
+    accuracy_score,
+    log_loss
+)
 
 from model import (
     create_model,
     load_client_data
 )
 
-import numpy as np
-import sys
+# -----------------------------------
+# Client ID
+# -----------------------------------
 
 client_id = int(sys.argv[1])
 
-X, y = load_client_data(
-    client_id
-)
+# -----------------------------------
+# Load Data
+# -----------------------------------
+
+X, y = load_client_data(client_id)
+
+# -----------------------------------
+# Create Model
+# -----------------------------------
 
 model = create_model()
 
-# initialize model
-model.fit(
-    X[:10],
-    y[:10]
-)
+# Initialize model once
+model.fit(X, y)
 
+# -----------------------------------
+# Flower Client
+# -----------------------------------
 
-class FlowerClient(
-    fl.client.NumPyClient
-):
+class FlowerClient(fl.client.NumPyClient):
 
-    def get_parameters(
-        self,
-        config
-    ):
+    # Get model weights
+    def get_parameters(self, config):
         return [
             model.coef_,
             model.intercept_
         ]
 
-    def set_parameters(
-        self,
-        parameters
-    ):
+    # Set model weights
+    def set_parameters(self, parameters):
         model.coef_ = parameters[0]
         model.intercept_ = parameters[1]
 
-    def fit(
-        self,
-        parameters,
-        config
-    ):
+    # Local Training
+    def fit(self, parameters, config):
 
-        self.set_parameters(
-            parameters
+        self.set_parameters(parameters)
+
+        model.fit(X, y)
+
+        # -----------------------------------
+        # Differential Privacy
+        # -----------------------------------
+
+        coef = model.coef_.copy()
+        intercept = model.intercept_.copy()
+
+        noise_std = 0.01
+
+        coef += np.random.normal(
+            0,
+            noise_std,
+            coef.shape
         )
 
-        model.fit(
-            X,
-            y
+        intercept += np.random.normal(
+            0,
+            noise_std,
+            intercept.shape
         )
 
         return (
-            self.get_parameters(config),
+            [coef, intercept],
             len(X),
             {}
         )
 
-    def evaluate(
-        self,
-        parameters,
-        config
-    ):
+    # Local Evaluation
+    def evaluate(self, parameters, config):
 
-        self.set_parameters(
-            parameters
+        self.set_parameters(parameters)
+
+        preds = model.predict(X)
+
+        probs = model.predict_proba(X)
+
+        accuracy = accuracy_score(
+            y,
+            preds
         )
 
-        from sklearn.metrics import (log_loss,accuracy_score)
-
-        pred=model.predict(X)
-        accuracy=accuracy_score(y,pred)
-        loss=log_loss(y,pred)
-
-        accuracy = model.score(
-            X,
-            y
+        loss = log_loss(
+            y,
+            probs
         )
 
         return (
@@ -95,6 +114,10 @@ class FlowerClient(
             }
         )
 
+
+# -----------------------------------
+# Start Client
+# -----------------------------------
 
 fl.client.start_numpy_client(
     server_address="127.0.0.1:8080",
