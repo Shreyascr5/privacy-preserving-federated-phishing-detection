@@ -1,7 +1,4 @@
-# federated/server.py
-
 import flwr as fl
-
 from strategy import strategy
 
 fl.server.start_server(
