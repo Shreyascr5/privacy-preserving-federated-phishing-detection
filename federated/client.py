@@ -76,7 +76,11 @@ class FlowerClient(
             parameters
         )
 
-        loss = 0.0
+        from sklearn.metrics import (log_loss,accuracy_score)
+
+        pred=model.predict(X)
+        accuracy=accuracy_score(y,pred)
+        loss=log_loss(y,pred)
 
         accuracy = model.score(
             X,
