@@ -1,0 +1,5 @@
+Method,Accuracy
+IID FL,92.88
+Non-IID FL,86.13
+DP-FL,86.14
+Proposed Method,86.07
