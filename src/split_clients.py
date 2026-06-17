@@ -3,7 +3,7 @@ from pathlib import Path
 from sklearn.model_selection import train_test_split
 
 df = pd.read_csv(
-    "dataset/processed/phishing_clean.csv"
+    "dataset/processed/train.csv"
 )
 
 client1, temp = train_test_split(
