@@ -1,0 +1,18 @@
+{
+  "framework": "Flower",
+  "strategy": "FedAvg",
+  "rounds": 12,
+  "clients": 4,
+  "local_epochs": 4,
+  "differential_privacy": {
+    "mechanism": "L2-clipped client deltas with Gaussian noise",
+    "clip_norm": 2.0,
+    "noise_multiplier": 0.025,
+    "accounting": "Demonstration mechanism; no formal epsilon claim"
+  },
+  "selective_updates": true,
+  "updates_sent": 42,
+  "updates_possible": 48,
+  "communication_reduction_percent": 12.5,
+  "model_artifact": "models/federated_global_model.joblib"
+}

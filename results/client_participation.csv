@@ -1,0 +1,5 @@
+client,samples,rounds_participated,updates_sent,updates_skipped
+Client 1,902,12,11,1
+Client 2,729,12,10,2
+Client 3,688,12,11,1
+Client 4,881,12,10,2
