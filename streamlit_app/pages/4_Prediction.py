@@ -21,20 +21,30 @@ st.write(
 # LOAD MODEL
 # ====================================
 
+from pathlib import Path
+import joblib
+
+ROOT_DIR = Path(__file__).resolve().parents[2]
+
 model = joblib.load(
-    "models/baseline_model.pkl"
+    ROOT_DIR / "models" / "baseline_model.pkl"
 )
 
 scaler = joblib.load(
-    "models/scaler.pkl"
+    ROOT_DIR / "models" / "scaler.pkl"
 )
+
 
 # ====================================
 # LOAD DATASET
 # ====================================
 
+from pathlib import Path
+
+ROOT_DIR = Path(__file__).resolve().parents[2]
+
 df = pd.read_csv(
-    "dataset/processed/test.csv"
+    ROOT_DIR / "dataset" / "processed" / "test.csv"
 )
 
 # ====================================
@@ -54,6 +64,31 @@ phishing_sample = (
 )
 
 # ====================================
+# REAL EXAMPLES
+# ====================================
+
+X = df.drop("Result", axis=1)
+y = df["Result"]
+
+X_scaled = scaler.transform(X)
+
+preds = model.predict(X_scaled)
+
+correct_legit = X[
+    (y == 0) &
+    (preds == 0)
+].iloc[0]
+
+correct_phishing = X[
+    (y == 1) &
+    (preds == 1)
+].iloc[0]
+
+legit_sample = correct_legit
+
+phishing_sample = correct_phishing
+
+# ====================================
 # DEMO SECTION
 # ====================================
 
@@ -70,11 +105,8 @@ sample_type = st.selectbox(
 if st.button("Run Demo Prediction"):
 
     if sample_type == "Legitimate Example":
-
         sample = legit_sample.values.reshape(1, -1)
-
     else:
-
         sample = phishing_sample.values.reshape(1, -1)
 
     sample_scaled = scaler.transform(sample)
@@ -90,13 +122,10 @@ if st.button("Run Demo Prediction"):
     st.write("### Prediction Result")
 
     if prediction == 0:
-
         st.success(
             "✅ Legitimate Website"
         )
-
     else:
-
         st.error(
             "⚠️ Phishing Website"
         )
